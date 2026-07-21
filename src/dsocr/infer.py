@@ -8,7 +8,7 @@ from transformers import AutoModel, AutoTokenizer
 #%%
 
 def infer_images(image_files, output='output', cuda_device=None, 
-                 prompt=None, base_size=1024, image_size=768, 
+                 prompt=None, base_size=1024, image_size=768, overwrite=False,
                  crop_mode=True, save_results=True, pbar=True):
 
     if isinstance(image_files, (str, Path)):
@@ -24,7 +24,6 @@ def infer_images(image_files, output='output', cuda_device=None,
     if not Path(output).is_dir():
         Path(output).mkdir(parents=True, exist_ok=True)
 
-
     model_name = 'deepseek-ai/DeepSeek-OCR-2'
     tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
     model = AutoModel.from_pretrained(model_name, use_safetensors=True, trust_remote_code=True)
@@ -32,9 +31,11 @@ def infer_images(image_files, output='output', cuda_device=None,
     
     for image_file in tqdm(image_files, desc="Processing images", disable=not pbar):
 
-        
         output_path = Path(output) / Path(image_file).stem
         output_path.mkdir(parents=True, exist_ok=True)
+        if not overwrite and (output_path / 'result.mmd').exists():
+            print(f"Skipping {image_file} as output already exists. Use overwrite=True to force reprocessing.")
+            continue
 
         with open(output_path / 'log.txt', 'w', encoding='utf-8') as log_file:
             sys.stdout = log_file
