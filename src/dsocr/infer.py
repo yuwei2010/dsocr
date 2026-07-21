@@ -30,7 +30,7 @@ def ocr_images(image_files, output='output', cuda_device=None,
 
     model_name = 'deepseek-ai/DeepSeek-OCR-2'
     tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
-    model = AutoModel.from_pretrained(model_name, use_safetensors=True, trust_remote_code=True)
+    model = AutoModel.from_pretrained(model_name, use_safetensors=True, trust_remote_code=True, attn_implementation="eager")
     model = model.eval().cuda().to(torch.bfloat16)
 
     pbar = tqdm(image_files, desc="Processing images", disable=not pbar)
@@ -53,6 +53,7 @@ def ocr_images(image_files, output='output', cuda_device=None,
             finally:
                 sys.stdout = sys.__stdout__
                 sys.stderr = sys.__stderr__
+        
 
 
 
