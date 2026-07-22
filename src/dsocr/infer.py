@@ -86,8 +86,12 @@ def dsocr_pdf(fpdf, page_num=None, output='output', dpi=100, **kwargs):
         image_path = output / f'page_{page_num:04d}.png'
         obj.page_to_image(page_num, str(image_path), dpi=dpi)
         imgs.append(str(image_path))
+
+    
     
     dp = dsocr_images(imgs, output=output, **kwargs)
+
+    out = []
 
 
     md = parse_latex('\n\n'.join([obj.get_text() for obj in dp]))
