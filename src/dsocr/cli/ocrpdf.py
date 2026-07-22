@@ -32,6 +32,7 @@ def main():
     parser.add_argument("pdf", help="Path to the PDF file")
     parser.add_argument("-p", "--page_num", default=None, type=str, help="Page numbers to process")
     parser.add_argument('-o', '--output', default="output", help="Output directory")
+    parser.add_argument('-s', '--saveas', default="result.md", help="Save the result as a specific filename")
     parser.add_argument("--dpi", type=int, default=100, help="DPI for PDF to image conversion")
 
     args = parser.parse_args()
@@ -44,7 +45,8 @@ def main():
     else:
         page_nums = None
     
-    dsocr_pdf(args.pdf, page_num=page_nums if args.page_num is not None else None, output=args.output, dpi=args.dpi)
+    dsocr_pdf(args.pdf, page_num=page_nums if args.page_num is not None else None, 
+              output=args.output, dpi=args.dpi, save_path=args.saveas)
 
 
 

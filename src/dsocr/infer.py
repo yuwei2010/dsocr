@@ -74,7 +74,7 @@ def dsocr_images(image_files, output='output', cuda_device=None,
 #%%
 
 
-def dsocr_pdf(fpdf, page_num=None, output='output', dpi=100, **kwargs):
+def dsocr_pdf(fpdf, page_num=None, output='output', dpi=100, save_path='result.md', **kwargs):
     
     obj = PDFPagesObject(fpdf)
     if page_num is None:
@@ -113,7 +113,7 @@ def dsocr_pdf(fpdf, page_num=None, output='output', dpi=100, **kwargs):
 
     md = parse_latex('\n\n'.join(mds))
 
-    with open(f"{output}/result.md", 'w', encoding='utf-8') as f:
+    with open(f"{output}/{save_path}", 'w', encoding='utf-8') as f:
         f.write(md)
     return dp
 
