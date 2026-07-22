@@ -12,7 +12,11 @@ from datasurfer.lib_objects.pdf_object import PDFPagesObject
 from datasurfer.datautils import is_sequence
 transformers.logging.set_verbosity_error()
 
+#%%
 
+def parse_latex(s):
+
+    return s.replace(r'\[ ', '$$').replace(r' \]', '$$').replace(r'\( ', '$').replace(r' \)', '$')
 #%%
 
 def dsocr_images(image_files, output='output', cuda_device=None, 
@@ -93,6 +97,11 @@ def dsocr_pdf(fpdf, page_num=None, output='output', dpi=100, **kwargs):
 
     out = []
 
+    for obj in dp:
+        out.append(parse_latex(obj.get_text()))
+        if (dp.path / 'images').is_dir():
+            pass
+
 
     md = parse_latex('\n\n'.join([obj.get_text() for obj in dp]))
 
@@ -100,11 +109,7 @@ def dsocr_pdf(fpdf, page_num=None, output='output', dpi=100, **kwargs):
         f.write(md)
     return dp
 
-#%%
 
-def parse_latex(s):
-
-    return s.replace(r'\[ ', '$$').replace(r' \]', '$$').replace(r'\( ', '$').replace(r' \)', '$')
 
 
 #%%
