@@ -2,16 +2,20 @@ import torch
 import os
 import sys
 import logging
+import transformers
 from pathlib import Path
 from tqdm import tqdm
 from transformers import AutoModel, AutoTokenizer
-import transformers
+from datasurfer.lib_objects.markdown_object import MarkdownObject
+from datasurfer import DataBay
+from datasurfer.lib_objects.pdf_object import PDFPagesObject
+from datasurfer.datautils import is_sequence
 transformers.logging.set_verbosity_error()
 
 
 #%%
 
-def ocr_images(image_files, output='output', cuda_device=None, 
+def dsocr_images(image_files, output='output', cuda_device=None, 
                  prompt=None, base_size=1024, image_size=768, overwrite=False,
                  crop_mode=True, save_results=True, pbar=True):
 
@@ -36,9 +40,11 @@ def ocr_images(image_files, output='output', cuda_device=None,
     pbar = tqdm(image_files, desc="Processing images", disable=not pbar)
     
     for image_file in pbar:
+
         pbar.set_postfix({"Current Image": Path(image_file).name})
         output_path = Path(output) / Path(image_file).stem
         output_path.mkdir(parents=True, exist_ok=True)
+
         if not overwrite and (output_path / 'result.mmd').exists():
             pbar.write(f"Skipping '{image_file}' as output already exists. Use overwrite=True to force reprocessing.")
             continue
@@ -53,8 +59,37 @@ def ocr_images(image_files, output='output', cuda_device=None,
             finally:
                 sys.stdout = sys.__stdout__
                 sys.stderr = sys.__stderr__
-        
+    db = DataBay(output, pattern=r'.*\\result.mmd', interface=MarkdownObject)
+    for dp in db:
+        for obj in dp:
+            obj.name = dp.name
 
+    return db.to_datapool(name=str(output), pbar=False)
+        
+#%%
+
+
+def dsocr_pdf(fpdf, page_num=None, output='output', dpi=100, **kwargs):
+    
+    obj = PDFPagesObject(fpdf)
+    if page_num is None:
+        page_nums = obj.page_nums
+    else:
+        page_nums = [page_num] if not is_sequence(page_num) else page_num
+
+    output = Path(output)
+    if not output.is_dir():
+        output.mkdir(parents=True, exist_ok=True)
+
+    imgs = []
+    for page_num in page_nums:
+        image_path = output / f'page_{page_num:04d}.png'
+        obj.page_to_image(page_num, str(image_path), dpi=dpi)
+        imgs.append(str(image_path))
+    
+    dp = dsocr_images(imgs, output=output, **kwargs)
+
+    return dp
 
 
 #%%
