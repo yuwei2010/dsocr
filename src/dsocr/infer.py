@@ -3,6 +3,7 @@ import os
 import sys
 import logging
 import transformers
+import shutil
 from pathlib import Path
 from tqdm import tqdm
 from transformers import AutoModel, AutoTokenizer
@@ -92,18 +93,25 @@ def dsocr_pdf(fpdf, page_num=None, output='output', dpi=100, **kwargs):
         imgs.append(str(image_path))
 
     
-    
     dp = dsocr_images(imgs, output=output, **kwargs)
 
-    out = []
+    mds = []
 
     for obj in dp:
-        out.append(parse_latex(obj.get_text()))
-        if (dp.path / 'images').is_dir():
-            pass
+        md = obj.get_text()
+        if (obj.path.parent / 'images').is_dir():
+            imgs = sorted((obj.path.parent / 'images').glob('*'))
+            if imgs:
+                dst_dir = output / 'images'
+                dst_dir.mkdir(parents=True, exist_ok=True)
+                for img in imgs:
+                    img_name = f"{obj.name}_{img.name}"
+                    shutil.copy2(img, dst_dir / img_name)
+                    md = md.replace(f'![](images/{img.name})', f'![](images/{img_name})')
+        mds.append(md)
 
 
-    md = parse_latex('\n\n'.join([obj.get_text() for obj in dp]))
+    md = parse_latex('\n\n'.join(mds))
 
     with open(f"{output}/result.md", 'w', encoding='utf-8') as f:
         f.write(md)
