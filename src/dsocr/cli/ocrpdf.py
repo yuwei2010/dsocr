@@ -1,5 +1,6 @@
 import argparse
-from dsocr import dsocr_images, dsocr_pdf
+from dsocr import dsocr_pdf
+from dsocr.infer import parse_latex
 from itertools import chain
 
 #%%
@@ -43,8 +44,8 @@ def main():
     else:
         page_nums = None
     
-    dp = dsocr_pdf(args.pdf, page_num=page_nums if args.page_num is not None else None, output=args.output, dpi=args.dpi)
-    print(dp.keys())
+    dsocr_pdf(args.pdf, page_num=page_nums if args.page_num is not None else None, output=args.output, dpi=args.dpi)
+
 
 
 if __name__ == "__main__":

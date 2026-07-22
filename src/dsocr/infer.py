@@ -89,7 +89,18 @@ def dsocr_pdf(fpdf, page_num=None, output='output', dpi=100, **kwargs):
     
     dp = dsocr_images(imgs, output=output, **kwargs)
 
+
+    md = parse_latex('\n\n'.join([obj.get_text() for obj in dp]))
+
+    with open(f"{output}/result.md", 'w', encoding='utf-8') as f:
+        f.write(md)
     return dp
+
+#%%
+
+def parse_latex(s):
+
+    return s.replace(r'\[ ', '$$').replace(r' \]', '$$').replace(r'\( ', '$').replace(r' \)', '$')
 
 
 #%%
