@@ -7,7 +7,7 @@ from pathlib import Path
 from tqdm import tqdm
 from transformers import AutoModel, AutoTokenizer
 from datasurfer.lib_objects.markdown_object import MarkdownObject
-from datasurfer import DataBay
+from datasurfer import DataBay, DataPool
 from datasurfer.lib_objects.pdf_object import PDFPagesObject
 from datasurfer.datautils import is_sequence
 transformers.logging.set_verbosity_error()
@@ -38,7 +38,8 @@ def dsocr_images(image_files, output='output', cuda_device=None,
     model = model.eval().cuda().to(torch.bfloat16)
 
     pbar = tqdm(image_files, desc="Processing images", disable=not pbar)
-    
+
+    objs = []
     for image_file in pbar:
 
         pbar.set_postfix({"Current Image": Path(image_file).name})
@@ -47,6 +48,7 @@ def dsocr_images(image_files, output='output', cuda_device=None,
 
         if not overwrite and (output_path / 'result.mmd').exists():
             pbar.write(f"Skipping '{image_file}' as output already exists. Use overwrite=True to force reprocessing.")
+            objs.append(MarkdownObject((output_path / 'result.mmd'), name=Path(image_file).stem))
             continue
 
         with open(output_path / 'log.txt', 'w', encoding='utf-8') as log_file:
@@ -59,12 +61,10 @@ def dsocr_images(image_files, output='output', cuda_device=None,
             finally:
                 sys.stdout = sys.__stdout__
                 sys.stderr = sys.__stderr__
-    db = DataBay(output, pattern=r'.*\\result.mmd', interface=MarkdownObject)
-    for dp in db:
-        for obj in dp:
-            obj.name = dp.name
+        objs.append(MarkdownObject((output_path / 'result.mmd'), name=Path(image_file).stem))
 
-    return db.to_datapool(name=str(output), pbar=False)
+    dp = DataPool(objs)
+    return dp
         
 #%%
 
