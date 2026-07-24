@@ -5,6 +5,7 @@ import logging
 import transformers
 import shutil
 import tempfile
+import regex as re
 from pathlib import Path
 from tqdm import tqdm
 from transformers import AutoModel, AutoTokenizer
@@ -17,8 +18,10 @@ transformers.logging.set_verbosity_error()
 #%%
 
 def parse_latex(s):
-
-    return s.replace(r'\[ ', '$$').replace(r' \]', '$$').replace(r'\( ', '$').replace(r' \)', '$')
+    s = re.sub(r'\\\[\s*(.*?)\s*\\\]', r'$$\1$$', s)
+    s = re.sub(r'\\\(\s*(.*?)\s*\\\)', r'$\1$', s)
+    return s
+    # return s.replace(r'\[', '$$').replace(r'\]', '$$').replace(r'\(', '$').replace(r'\)', '$')
 #%%
 
 def dsocr_images(image_files, output='output', cuda_device=None, 
@@ -73,8 +76,6 @@ def dsocr_images(image_files, output='output', cuda_device=None,
     return dp
         
 #%%
-
-
 def dsocr_pdf(fpdf, page_num=None, output='output', dpi=100, save_path='result.md', **kwargs):
     tmp_dir = tempfile.mkdtemp(prefix='pdf_ocr_')
     

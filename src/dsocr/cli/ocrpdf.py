@@ -44,10 +44,11 @@ def main():
             page_nums = sorted(set(chain(*parse_page_nums(args.page_num))))
     else:
         page_nums = None
+
+    page_nums = [int(num)-1 for num in page_nums]
     
     dsocr_pdf(args.pdf, page_num=page_nums if args.page_num is not None else None, 
               output=args.output, dpi=args.dpi, save_path=args.saveas)
-
 
 
 if __name__ == "__main__":
