@@ -33,7 +33,7 @@ def main():
     parser.add_argument("-p", "--page_num", default=None, type=str, help="Page numbers to process")
     parser.add_argument('-o', '--output', default="output", help="Output directory")
     parser.add_argument('-s', '--saveas', default="result.md", help="Save the result as a specific filename")
-    parser.add_argument("--dpi", type=int, default=100, help="DPI for PDF to image conversion")
+    parser.add_argument("--dpi", type=int, default=300, help="DPI for PDF to image conversion")
 
     args = parser.parse_args()
 

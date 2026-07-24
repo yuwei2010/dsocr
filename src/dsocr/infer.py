@@ -4,6 +4,7 @@ import sys
 import logging
 import transformers
 import shutil
+import tempfile
 from pathlib import Path
 from tqdm import tqdm
 from transformers import AutoModel, AutoTokenizer

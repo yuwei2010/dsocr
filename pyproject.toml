@@ -46,6 +46,7 @@ docs = [
     "mkdocstrings-python",
 ]
 
+
 [project.urls]
 bugs = "https://github.com/yuwei2010/dsocr/issues"
 changelog = "https://github.com/yuwei2010/dsocr/releases"
@@ -53,7 +54,7 @@ documentation = "https://yuwei2010.github.io/dsocr/"
 homepage = "https://github.com/yuwei2010/dsocr"
 
 [project.scripts]
-dsocr = "dsocr.cli:app"
+ocrpdf = "dsocr.cli.ocrpdf:main"
 
 [tool.ty]
 # All rules are enabled as "error" by default; no need to specify unless overriding.
