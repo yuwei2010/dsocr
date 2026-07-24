@@ -20,6 +20,7 @@ transformers.logging.set_verbosity_error()
 def parse_latex(s):
     s = re.sub(r'\\\[\s*(.*?)\s*\\\]', r'$$\1$$', s)
     s = re.sub(r'\\\(\s*(.*?)\s*\\\)', r'$\1$', s)
+    s = re.sub(r'\$\s*(.*?)\s*\$', lambda m: f'${m.group(1)}$', s)
     return s
     # return s.replace(r'\[', '$$').replace(r'\]', '$$').replace(r'\(', '$').replace(r'\)', '$')
 #%%
