@@ -96,15 +96,19 @@ def dsocr_pdf(fpdf, page_num=None, output='output', dpi=100, save_path='result.m
         obj.page_to_image(page_num, str(image_path), dpi=dpi)
         imgs.append(str(image_path))
 
-    
+    root = Path(save_path).resolve().parent
+    if not root.is_dir():
+        root.mkdir(parents=True, exist_ok=True)
+
     dp = dsocr_images(imgs, output=output, **kwargs)
+
     mds = []
     for obj in dp:
         md = obj.get_text()
         if (obj.path.parent / 'images').is_dir():
             imgs = sorted((obj.path.parent / 'images').glob('*'))
             if imgs:
-                dst_dir = output / 'images'
+                dst_dir = root / 'images'
                 dst_dir.mkdir(parents=True, exist_ok=True)
                 for img in imgs:
                     img_name = f"{obj.name}_{img.name}"
@@ -114,9 +118,8 @@ def dsocr_pdf(fpdf, page_num=None, output='output', dpi=100, save_path='result.m
 
 
     md = parse_latex('\n\n'.join(mds))
+    Path(save_path).write_text(md, encoding='utf-8')
 
-    with open(f"{output}/{save_path}", 'w', encoding='utf-8') as f:
-        f.write(md)
     return dp
 
 
