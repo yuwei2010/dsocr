@@ -76,6 +76,7 @@ def dsocr_images(image_files, output='output', cuda_device=None,
 
 
 def dsocr_pdf(fpdf, page_num=None, output='output', dpi=100, save_path='result.md', **kwargs):
+    tmp_dir = tempfile.mkdtemp(prefix='pdf_ocr_')
     
     obj = PDFPagesObject(fpdf)
     if page_num is None:
@@ -89,7 +90,7 @@ def dsocr_pdf(fpdf, page_num=None, output='output', dpi=100, save_path='result.m
 
     imgs = []
     for page_num in page_nums:
-        image_path = output / f'page_{page_num:04d}.png'
+        image_path = Path(tmp_dir) / f'page_{page_num:04d}.png'
         obj.page_to_image(page_num, str(image_path), dpi=dpi)
         imgs.append(str(image_path))
 
