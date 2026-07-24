@@ -98,9 +98,7 @@ def dsocr_pdf(fpdf, page_num=None, output='output', dpi=100, save_path='result.m
 
     
     dp = dsocr_images(imgs, output=output, **kwargs)
-
     mds = []
-
     for obj in dp:
         md = obj.get_text()
         if (obj.path.parent / 'images').is_dir():
