@@ -112,7 +112,7 @@ def dsocr_images(image_files, output='output', cuda_device=None,
     # model = model.eval().cuda().to(torch.bfloat16)
 
     # Wrap the image list with a progress bar (disabled when pbar=False).
-    pbar = tqdm(image_files, desc="Processing images", disable=not pbar)
+    pbar = tqdm(image_files, desc="Processing images", disable=not pbar, unit="image")
 
     objs = []
     for image_file in pbar:
