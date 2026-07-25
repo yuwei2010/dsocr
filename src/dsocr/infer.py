@@ -232,11 +232,11 @@ def dsocr_pdf(fpdf, page_num=None, output='output', dpi=100, save_path='result.m
                     img_name = f"{obj.name}_{img.name}"
                     shutil.copy2(img, dst_dir / img_name)
                     md = md.replace(f'![](images/{img.name})', f'![](images/{img_name})')
-        mds.append(md)
+        mds.append(parse_latex(md))
 
 
     # Concatenate all pages, normalize LaTeX delimiters, and write the result.
-    md = parse_latex('\n\n'.join(mds))
+    md = '\n\n'.join(mds)
     Path(save_path).write_text(md, encoding='utf-8')
 
     return dp
