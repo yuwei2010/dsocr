@@ -106,10 +106,10 @@ def dsocr_images(image_files, output='output', cuda_device=None,
 
     # Load the DeepSeek-OCR-2 tokenizer and model from the Hugging Face hub.
     model_name = 'deepseek-ai/DeepSeek-OCR-2'
-    tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
-    model = AutoModel.from_pretrained(model_name, use_safetensors=True, trust_remote_code=True, attn_implementation="eager")
+    tokenizer = None # AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+    model = None # AutoModel.from_pretrained(model_name, use_safetensors=True, trust_remote_code=True, attn_implementation="eager")
     # Switch to eval mode, move to GPU, and cast to bfloat16 for inference.
-    model = model.eval().cuda().to(torch.bfloat16)
+    # model = model.eval().cuda().to(torch.bfloat16)
 
     # Wrap the image list with a progress bar (disabled when pbar=False).
     pbar = tqdm(image_files, desc="Processing images", disable=not pbar)
@@ -128,6 +128,12 @@ def dsocr_images(image_files, output='output', cuda_device=None,
             pbar.write(f"Skipping '{image_file}' as output already exists. Use overwrite=True to force reprocessing.")
             objs.append(MarkdownObject((output_path / 'result.mmd'), name=Path(image_file).stem))
             continue
+
+        elif tokenizer is None or model is None:
+            tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
+            model = AutoModel.from_pretrained(model_name, use_safetensors=True, trust_remote_code=True, attn_implementation="eager")
+            # Switch to eval mode, move to GPU, and cast to bfloat16 for inference.
+            model = model.eval().cuda().to(torch.bfloat16)            
 
         # Redirect stdout/stderr into a per-image log file so that the model's
         # verbose console output is captured on disk rather than the terminal.
