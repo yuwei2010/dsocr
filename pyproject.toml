@@ -55,6 +55,7 @@ homepage = "https://github.com/yuwei2010/dsocr"
 
 [project.scripts]
 ocrpdf = "dsocr.cli.ocrpdf:main"
+ocrimage = "dsocr.cli.ocrimage:main"
 
 [tool.ty]
 # All rules are enabled as "error" by default; no need to specify unless overriding.
