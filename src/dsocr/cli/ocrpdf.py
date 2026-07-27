@@ -9,7 +9,6 @@ import argparse
 from itertools import chain
 
 from dsocr import dsocr_pdf
-from dsocr.infer import parse_latex  # noqa: F401  (re-exported for convenience)
 
 
 #%%
