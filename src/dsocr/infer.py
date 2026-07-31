@@ -53,7 +53,7 @@ def parse_latex(s):
 # Image OCR
 # ---------------------------------------------------------------------------
 
-def dsocr_images(image_files, output='output', cuda_device=None, 
+def dsocr_images(image_files, output='output', cuda_device=None,
                  prompt=None, base_size=1024, image_size=768, overwrite=False,
                  crop_mode=True, save_results=True, pbar=True):
     """
@@ -93,7 +93,7 @@ def dsocr_images(image_files, output='output', cuda_device=None,
     # Validate that every requested image actually exists on disk.
     if any(not Path(image_file).is_file() for image_file in image_files):
         raise FileNotFoundError("One or more image files do not exist.")
-    
+
     # Default prompt instructs the model to convert the document to markdown.
     prompt = prompt or "<image>\n<|grounding|>Convert the document to markdown."
     # Pin the CUDA device before loading the model so it lands on the right GPU.
@@ -133,7 +133,7 @@ def dsocr_images(image_files, output='output', cuda_device=None,
             tokenizer = AutoTokenizer.from_pretrained(model_name, trust_remote_code=True)
             model = AutoModel.from_pretrained(model_name, use_safetensors=True, trust_remote_code=True, attn_implementation="eager")
             # Switch to eval mode, move to GPU, and cast to bfloat16 for inference.
-            model = model.eval().cuda().to(torch.bfloat16)            
+            model = model.eval().cuda().to(torch.bfloat16)
 
         # Redirect stdout/stderr into a per-image log file so that the model's
         # verbose console output is captured on disk rather than the terminal.
@@ -142,8 +142,8 @@ def dsocr_images(image_files, output='output', cuda_device=None,
             sys.stderr = log_file
             try:
                 # Run the actual OCR inference via the model's built-in method.
-                model.infer(tokenizer, prompt=prompt, image_file=str(image_file), 
-                            output_path=str(output_path), base_size=base_size, image_size=image_size, 
+                model.infer(tokenizer, prompt=prompt, image_file=str(image_file),
+                            output_path=str(output_path), base_size=base_size, image_size=image_size,
                             crop_mode=crop_mode, save_results=save_results)
             finally:
                 # Always restore the original streams, even if inference fails.
@@ -155,13 +155,13 @@ def dsocr_images(image_files, output='output', cuda_device=None,
     # Bundle all per-image markdown objects into a single DataPool.
     dp = DataPool(objs)
     return dp
-        
+
 #%%
 # ---------------------------------------------------------------------------
 # PDF OCR
 # ---------------------------------------------------------------------------
 
-def dsocr_pdf(fpdf, page_num=None, output='output', dpi=100, save_path='result.md', **kwargs):
+def dsocr_pdf(fpdf, page_num=None, output='output', dpi=300, save_path='result.md', **kwargs):
     """
     Run DeepSeek-OCR-2 on a PDF document.
 
@@ -194,7 +194,7 @@ def dsocr_pdf(fpdf, page_num=None, output='output', dpi=100, save_path='result.m
     """
     # Create a temporary directory to hold the rasterized page images.
     tmp_dir = tempfile.mkdtemp(prefix='pdf_ocr_')
-    
+
     # Wrap the PDF in a datasurfer PDFPagesObject for page-level access.
     obj = PDFPagesObject(fpdf)
     # Determine which pages to process: all pages, a single page, or a subset.

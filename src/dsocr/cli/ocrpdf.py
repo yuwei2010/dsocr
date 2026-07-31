@@ -106,12 +106,13 @@ def main():
         page_nums = None
 
     # Convert from 1-based (user-facing) to 0-based (internal) page indices.
-    page_nums = [int(num) - 1 for num in page_nums]
+    if page_nums is not None:
+        page_nums = [int(num) - 1 for num in page_nums]
 
     # Delegate to the core OCR pipeline.
     dsocr_pdf(
         args.pdf,
-        page_num=page_nums if args.page_num is not None else None,
+        page_num=page_nums,
         output=args.output,
         dpi=args.dpi,
         save_path=args.saveas,
