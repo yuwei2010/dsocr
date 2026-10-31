@@ -91,6 +91,11 @@ def main():
         help="DPI used when rasterising PDF pages to images. Default: 300."
     )
 
+    parser.add_argument(
+        "-i", "--image_prefix", default=None,
+        help="Prefix to prepend to all extracted image filenames. Default: None."
+    )
+
     args = parser.parse_args()
 
     # Normalise the page specification into a flat, sorted, unique list.
@@ -116,6 +121,7 @@ def main():
         output=args.output,
         dpi=args.dpi,
         save_path=args.saveas,
+        image_prefix=args.image_prefix
     )
 
 

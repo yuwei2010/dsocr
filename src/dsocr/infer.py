@@ -161,7 +161,7 @@ def dsocr_images(image_files, output='output', cuda_device=None,
 # PDF OCR
 # ---------------------------------------------------------------------------
 
-def dsocr_pdf(fpdf, page_num=None, output='output', dpi=300, save_path='result.md', **kwargs):
+def dsocr_pdf(fpdf, page_num=None, output='output', dpi=300, save_path='result.md', image_prefix=None, **kwargs):
     """
     Run DeepSeek-OCR-2 on a PDF document.
 
@@ -236,6 +236,8 @@ def dsocr_pdf(fpdf, page_num=None, output='output', dpi=300, save_path='result.m
                 dst_dir.mkdir(parents=True, exist_ok=True)
                 for img in imgs:
                     img_name = f"{obj.name}_{img.name}"
+                    if image_prefix is not None:
+                        img_name = f"{image_prefix}_{img_name}"
                     shutil.copy2(img, dst_dir / img_name)
                     md = md.replace(f'![](images/{img.name})', f'![](images/{img_name})')
         mds.append(parse_latex(md))
